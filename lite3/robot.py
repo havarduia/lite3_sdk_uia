@@ -10,6 +10,7 @@ import signal
 import threading
 import time
 from contextlib import contextmanager
+from functools import cached_property
 os.environ.setdefault('RMW_IMPLEMENTATION', 'rmw_cyclonedds_cpp')
 
 import rclpy                                           # noqa: E402
@@ -25,6 +26,7 @@ from std_msgs.msg import Float64, Int32MultiArray      # noqa: E402
 from .depth import Depth                               # noqa: E402
 from .motion import Motion, dist                       # noqa: E402
 from .posture import Posture                           # noqa: E402
+from .speaker import Speaker                           # noqa: E402
 from .state import STANDING, parse                     # noqa: E402
 from .udp import Lite3Error                            # noqa: E402
 
@@ -309,6 +311,20 @@ class Lite3(Posture, Motion, Depth):
         time.sleep(window)
         b = self.pose
         return dist(a, b) <= tol
+
+    # --- sound -------------------------------------------------------------
+    @cached_property
+    def speaker(self):
+        """The robot's speaker, on the motion computer (lite3.speaker)."""
+        return Speaker()
+
+    def play(self, name, wait=True):
+        """Play one of the robot's built-in clips, e.g. play('okstop')."""
+        return self.speaker.play(name, wait=wait)
+
+    def play_file(self, path, wait=True):
+        """Play any local audio file out of the robot."""
+        return self.speaker.play_file(path, wait=wait)
 
     # --- summary -----------------------------------------------------------
     def status(self):
