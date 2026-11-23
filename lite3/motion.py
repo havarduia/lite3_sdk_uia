@@ -181,9 +181,8 @@ class Motion:
     def turn(self, radians, rate=0.4, force=False, guard=True):
         """Turn in place by `radians` relative to the current heading. Positive is
         left; any magnitude, beyond a full revolution too. With guard, refuses
-        (turned 0) a turn that would swing his body onto something in Nav2's
-        costmap, and stops if the depth camera sees something on the side
-        he turns to.
+        (turned 0) a turn turn_blocked() objects to, and stops if the depth
+        camera sees something on the side he turns to.
         """
         rate = min(abs(rate), MAX_YAW_RATE)
         if not rate > 0:
@@ -236,6 +235,11 @@ class Motion:
             done(None, p)
         r['turned'] = acc['total']          # unwrapped, so 180+ reads correctly
         return r
+
+    def turn_blocked(self, radians):
+        """A reason not to start this turn, or None. The SDK has no map, so None;
+        a subclass that has one (a costmap) overrides it."""
+        return None
 
     def turn_deg(self, degrees, **kw):
         r = self.turn(math.radians(degrees), **kw)

@@ -6,9 +6,33 @@
 """
 import math
 import struct
+import subprocess
 import time
 
 from .udp import Lite3Error
+
+CAMERA_SERVICE = 'realsense_ros2.service'
+
+
+def service(unit, on=None):
+    """Start (True) or stop (False) a systemd unit, or just look (None);
+    returns whether it is active afterwards. Passwordless only for the exact
+    commands in the sudoers entry, docs/setup.md."""
+    if on is not None:
+        r = subprocess.run(['sudo', '-n', '/usr/bin/systemctl',
+                            'start' if on else 'stop', unit],
+                           stderr=subprocess.PIPE, universal_newlines=True)
+        if r.returncode:
+            raise Lite3Error('systemctl %s %s failed (%s) - is the sudoers '
+                             'entry from docs/setup.md installed?'
+                             % ('start' if on else 'stop', unit, r.stderr.strip()))
+    return subprocess.run(['systemctl', 'is-active', '--quiet', unit]).returncode == 0
+
+
+def camera(on=None):
+    """The depth camera service. Active is not streaming: the node takes a few
+    seconds, so judge it by frames (Lite3.wait_cloud)."""
+    return service(CAMERA_SERVICE, on)
 
 # --- camera mounting, from voa/launch/voa_launch.py ---
 # The 20 degree nose-down pitch is real: ignore it and the floor reads as a wall.
@@ -47,10 +71,11 @@ class Depth:
     def wait_cloud(self, timeout=10.0):
         if not self._wait(self.cloud_fresh, timeout):
             raise Lite3Error(
-                'no point cloud. Start the camera with: python3 -m '
-                'robot.protocol camera on   (if it is up but silent, check '
-                'journalctl -u realsense_ros2, and that the Jetson has all 6 '
-                'cores: cat /sys/devices/system/cpu/online should say 0-5)')
+                'no point cloud. Start the camera with: python3 -c "from '
+                'lite3.depth import camera; camera(True)"   (if it is up but '
+                'silent, check journalctl -u realsense_ros2, and that the '
+                'perception computer has all 6 cores: cat '
+                '/sys/devices/system/cpu/online should say 0-5)')
         return self._node.cloud
 
     def scan(self, fov_deg=45, bin_deg=5):
