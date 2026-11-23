@@ -1,5 +1,9 @@
 # Setting up a stock Lite3 Pro
 
+Checked 2026-11-24 on a Lite3 Pro (Foxy, pip 23-24, Ubuntu's setuptools 45)
+whose bridge patch, SSH key and sudoers entry were already in place: those
+three steps are written from the stack's notes, not re-run on a fresh robot.
+
 Once per robot. Everything runs on the **perception computer** (Xavier NX,
 Ubuntu 20.04, ROS 2 Foxy). Reach it with `ssh ysc@192.168.1.103` on the
 robot's network, or `ssh ysc@192.168.2.x` on its own Wi-Fi.
@@ -10,6 +14,12 @@ The two computers:
 |---|---|---|
 | motion (RK3588) | 192.168.1.120, or 192.168.2.1 on the robot's Wi-Fi | `jy_exe`, the walking controller; the front camera; the speaker; the sonars |
 | perception (Xavier NX) | 192.168.1.103 | ROS 2 Foxy, the bridge to the motion computer, the RealSense depth camera, **this SDK** |
+
+First get the SDK onto the perception computer; step 2 uses its patch:
+
+```bash
+git clone https://github.com/havarduia/lite3_sdk_uia.git ~/lite3_sdk
+```
 
 ## 1. ROS 2 and the bridge
 
@@ -45,13 +55,12 @@ patch -p1 < ~/lite3_sdk/patches/transfer-jetson2motion.patch
 source /opt/ros/foxy/setup.bash
 colcon build
 sudo systemctl restart transfer_ros2.service
-ros2 topic echo --once /robot_state_debug       # now 10 numbers; the 8th is the battery
+ros2 topic echo /robot_state_debug              # now 10 numbers, the 8th the battery; Ctrl-C to stop
 ```
 
 ## 3. Install the SDK
 
 ```bash
-git clone https://github.com/havarduia/lite3_sdk_uia.git ~/lite3_sdk
 pip3 install --user --no-build-isolation -e ~/lite3_sdk
 ```
 
