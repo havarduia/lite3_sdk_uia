@@ -8,3 +8,4 @@
 See README.md and docs/api.md.
 """
 from .udp import ACTIONS, Lite3Error     # noqa: F401
+from .robot import Lite3                 # noqa: F401,E402
