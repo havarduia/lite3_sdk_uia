@@ -51,7 +51,7 @@ ros2 topic echo --once /robot_state_debug       # now 10 numbers; the 8th is the
 ## 3. Install the SDK
 
 ```bash
-git clone <this repository> ~/lite3_sdk
+git clone https://github.com/havarduia/lite3_sdk_uia.git ~/lite3_sdk
 pip3 install --user --no-build-isolation -e ~/lite3_sdk
 ```
 

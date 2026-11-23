@@ -19,7 +19,7 @@ On the perception computer (`ssh ysc@192.168.1.103`), once the one-time
 [setup](docs/setup.md) is done:
 
 ```bash
-git clone <this repository> ~/lite3_sdk
+git clone https://github.com/havarduia/lite3_sdk_uia.git ~/lite3_sdk
 pip3 install --user --no-build-isolation -e ~/lite3_sdk
 source /opt/ros/foxy/setup.bash
 python3 -m lite3 status          # one line: state, battery, pose, sonars
