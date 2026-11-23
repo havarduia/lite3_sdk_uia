@@ -8,4 +8,11 @@
 See README.md and docs/api.md.
 """
 from .udp import ACTIONS, Lite3Error     # noqa: F401
-from .robot import Lite3                 # noqa: F401,E402
+
+
+def __getattr__(name):
+    # Lite3 loads rclpy, so only when asked for: udp, state, speaker and camera work without ROS.
+    if name == 'Lite3':
+        from .robot import Lite3
+        return Lite3
+    raise AttributeError("module 'lite3' has no attribute %r" % name)

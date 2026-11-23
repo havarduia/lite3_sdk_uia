@@ -5,6 +5,7 @@
 """
 import os
 import struct
+import subprocess
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -27,6 +28,13 @@ def main():
     assert state.parse([6, 0, 0, 0, 0, 0, 0, 80]) == dict(zip(state.STATE_FIELDS[:8], [6, 0, 0, 0, 0, 0, 0, 80]))
     assert 'battery' not in state.parse([6, 0, 0, 0, 0, 0, 0])
     assert issubclass(lite3.Lite3Error, RuntimeError) and 'dance' in lite3.ACTIONS
+    # the parts that need no ROS load without it: rclpy comes in only with Lite3
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    probe = ('import sys; sys.path.insert(0, %r); import lite3, lite3.udp, lite3.state, lite3.speaker, '
+             'lite3.camera, lite3.depth; from lite3 import Lite3Error, ACTIONS; '
+             'assert "rclpy" not in sys.modules, "rclpy loaded"' % root)
+    r = subprocess.run([sys.executable, '-c', probe], stderr=subprocess.PIPE, universal_newlines=True)
+    assert r.returncode == 0, r.stderr.strip().splitlines()[-1]
     print('check_udp_state ok')
 
 
