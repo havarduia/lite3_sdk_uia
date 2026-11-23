@@ -51,4 +51,4 @@ and the robot has no package mirror.
 | `python3 -m lite3` | the command line |
 | `tests/` | checks that need no robot: `python3 tests/check_motion.py` |
 
-Split from the `lite3_api` project (commit `45be46a`), University of Agder, 2026.
+Split from [lite3_stack_uia](https://github.com/havarduia/lite3_stack_uia) (then `lite3_api`, commit `45be46a`), University of Agder, 2026.

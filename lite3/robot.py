@@ -80,7 +80,7 @@ class RobotNode(Node):
     """The topics of the stock robot. Subclass it (Lite3.node_class) to listen to more."""
 
     def __init__(self, odom_topic=DEFAULT_ODOM_TOPIC):
-        super().__init__('lite3_api')
+        super().__init__('lite3')
         best = QoSProfile(depth=1)
         best.reliability = ReliabilityPolicy.BEST_EFFORT
 
@@ -96,7 +96,7 @@ class RobotNode(Node):
                                  self._state_cb, 1)
         self.create_subscription(Odometry, odom_topic, self._odom_cb, 1)
         # On a node of its own so it can be read at its own, slower, rate.
-        self.cloud_node = Node('lite3_api_cloud')
+        self.cloud_node = Node('lite3_cloud')
         self.cloud_node.create_subscription(PointCloud2, '/camera/depth/color/points',
                                             self._cloud_cb, best)
         # The rear one bottoms out at 0.28 m, which lying down also means "no echo":
