@@ -163,7 +163,8 @@ class Posture:
 
     def action(self, name, force=False):
         """Play a built-in trick from ACTIONS. Does NOT stand or sit for
-        you. Sent 3 times at 1 Hz; returns when sent, not when the trick is over.
+        you. Sent once, as the app does; returns when sent, not when the trick is
+        over. cancel_trick() stops one in udp.CANCELLABLE.
         """
         code, posture = ACTIONS[name]
         self._require_battery(force)
@@ -176,9 +177,12 @@ class Posture:
             raise Lite3Error(
                 '%s starts lying and armed (basic_state 1), not %s. '
                 'stand() then sit() gets there.' % (name, self.basic))
-        for _ in range(3):
-            udp.send(code)
-            time.sleep(1.0)
+        udp.send(code)
+
+    def cancel_trick(self):
+        """Stop a running trick, as the app's cancel does. Only the tricks in
+        udp.CANCELLABLE stop; the app offers no cancel for the others."""
+        udp.send(udp.TRICK_CANCEL, 1)
 
     def _require_battery(self, force=False):
         b = self.battery

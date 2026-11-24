@@ -64,9 +64,11 @@ Every code the SDK sends, from `lite3.udp.SOURCES`:
 | `0x21010130` | `STICK_PITCH` | pitch stick, -32767..32767; in posture mode it tilts the body | recorded from the app |
 | `0x21010C02` | `MODE_MANUAL` | manual mode (the app sends it when a stick moves) | third-party |
 | `0x31010C05` | `ZERO` | joints to zero | vendor SDK |
-| `0x2101030C` | `dance` | trick, from standing | third-party, confirmed by recording |
-| `0x21010506` | `hello` | trick, from lying | third-party |
-| `0x21010204` / `020D` | `twist` / `twist_jump` | tricks, from standing | third-party |
+| `0x2101030C` | `moonwalk` | trick, from standing; can be cancelled | recorded from the app |
+| `0x21010506` | `hello` | trick, from lying; cannot be cancelled | recorded from the app |
+| `0x21010204` | `twist` | trick, from standing; can be cancelled | recorded from the app |
+| `0x2101020D` | `twist_jump` | trick, from standing; cannot be cancelled | recorded from the app |
+| `0x21010C0B` | `TRICK_CANCEL` | stops moonwalk or twist; the app sends value 1 or 0, both work | recorded from the app |
 | `0x2101050B` | `long_jump` | trick, from lying; needs 2 m clear | third-party |
 | `0x21010205` | `turn_over` | rolls onto his back | third-party |
 

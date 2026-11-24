@@ -4,13 +4,34 @@
     python3 -m lite3 stand
     python3 -m lite3 walk 0.5
 """
+import select
 import sys
 import time
 
-from .udp import ACTIONS
+from .udp import ACTIONS, CANCELLABLE
+
+TRICK_WAIT_S = 30.0     # how long `action` keeps Enter as the cancel key
 
 USAGE = ('commands: status stand sit auto walk <m> turn <deg> scan action <%s> '
          'estop [--disarm] frame <file.jpg> clips play <clip>' % '|'.join(ACTIONS))
+
+
+def trick(bot, name):
+    """Start a trick and keep Enter (or Ctrl-C) as its cancel for TRICK_WAIT_S."""
+    if name not in CANCELLABLE:
+        print('NOTE: %s cannot be cancelled once started (the app cannot either)' % name)
+        bot.action(name)
+        return
+    bot.action(name)
+    print('%s started - Enter or Ctrl-C cancels it (%.0f s)' % (name, TRICK_WAIT_S))
+    try:
+        if select.select([sys.stdin], [], [], TRICK_WAIT_S)[0]:
+            sys.stdin.readline()
+            bot.cancel_trick()
+            print('cancel sent')
+    except KeyboardInterrupt:
+        bot.cancel_trick()
+        print('cancel sent')
 
 
 def main(argv=None):
@@ -53,7 +74,7 @@ def main(argv=None):
             print('estop:', bot.estop(disarm='--disarm' in args))
             print(bot.status())
         elif cmd == 'action':
-            bot.action(args[1])
+            trick(bot, args[1])
             print(bot.status())
         else:
             print('unknown command: %s\n%s' % (cmd, USAGE))

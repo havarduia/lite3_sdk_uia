@@ -75,7 +75,8 @@ node); each step fixed a crash that happened.
 | `upright(heartbeat=True)` | context manager: heartbeat (if not already on), wait, stand; lies down on every way out |
 | `auto()` | leave posture mode, set auto mode. The motion calls do it for you |
 | `tilt(pitch_deg)` | context manager: body pitched nose up (negative: down) while standing still; about 14° at most |
-| `action(name)` | a built-in trick from `ACTIONS`; does not stand or sit for you. Only `dance` is confirmed on a robot |
+| `action(name)` | a built-in trick from `ACTIONS`, named as in the app; does not stand or sit for you. Sent once, returns at once |
+| `cancel_trick()` | stops a running `moonwalk` or `twist` (`udp.CANCELLABLE`); the others cannot be stopped, in the app either |
 
 ## Motion
 
@@ -163,5 +164,5 @@ assert result['reason'] == 'target reached' and halted
 
 ```
 python3 -m lite3 status | stand | sit | auto | walk <m> | turn <deg> | scan |
-                 action <name> | estop [--disarm] | frame <file.jpg> | clips | play <clip>
+                 action <name> (Enter or Ctrl-C cancels) | estop [--disarm] | frame <file.jpg> | clips | play <clip>
 ```
