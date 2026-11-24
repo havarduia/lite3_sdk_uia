@@ -37,7 +37,7 @@ ACTIONS = {
     'turn_over':  (0x21010205, 'lie'),     # rolls onto its back
 }
 # The app's cancel, recorded 2026-11-24: sent once per press, value 1 one time and
-# 0 the next; both stopped the trick. Only these tricks offer it in the app.
+# 0 the next; both stopped the trick. Sending 1 twice in a row did not (see cancel_trick). Only these tricks offer it in the app.
 # The app sends each trick once too.
 TRICK_CANCEL = 0x21010C0B
 CANCELLABLE = ('twist', 'moonwalk')

@@ -68,7 +68,7 @@ Every code the SDK sends, from `lite3.udp.SOURCES`:
 | `0x21010506` | `hello` | trick, from lying; cannot be cancelled | recorded from the app |
 | `0x21010204` | `twist` | trick, from standing; can be cancelled | recorded from the app |
 | `0x2101020D` | `twist_jump` | trick, from standing; cannot be cancelled | recorded from the app |
-| `0x21010C0B` | `TRICK_CANCEL` | stops moonwalk or twist; the app sends value 1 or 0, both work | recorded from the app |
+| `0x21010C0B` | `TRICK_CANCEL` | stops moonwalk or twist. The app alternates the value 1, 0, 1; the same value twice did nothing, so the SDK sends 0 then 1 | recorded from the app |
 | `0x2101050B` | `long_jump` | trick, from lying; needs 2 m clear | third-party |
 | `0x21010205` | `turn_over` | rolls onto his back | third-party |
 

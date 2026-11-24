@@ -182,6 +182,9 @@ class Posture:
     def cancel_trick(self):
         """Stop a running trick, as the app's cancel does. Only the tricks in
         udp.CANCELLABLE stop; the app offers no cancel for the others."""
+        # It seems to act on a CHANGE of value (the app alternates 1, 0, 1; the CLI sending 1
+        # twice did nothing the second time, 2026-11-24): 0 then 1 is a change either way.
+        udp.send(udp.TRICK_CANCEL, 0)
         udp.send(udp.TRICK_CANCEL, 1)
 
     def _require_battery(self, force=False):
