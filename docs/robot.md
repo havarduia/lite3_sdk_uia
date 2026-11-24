@@ -95,8 +95,13 @@ codes that are not used.
 - **The first stand after power-on does nothing.** The robot uses it to arm
   (98 → 9 → 1). `stand()` waits 2 s, sees he is still lying, and sends it once more.
 - **Nothing happens without a heartbeat.** `jy_exe` ignores every network
-  command unless the app's keepalive keeps arriving. `heartbeat_start()`
-  sends it from Python, so the robot then obeys with no app at all.
+  command unless the app's keepalive keeps arriving. `Lite3()` sends it from
+  Python (`heartbeat_start()`), so the robot then obeys with no app at all.
+- **Losing the heartbeat lies him down, about 3.5 s later** (2026-11-24, app off,
+  heartbeat stopped). Standing still: 6 → 7 → 8, pitch under 2°, gentle. Walking:
+  he kept obeying velocity for those seconds, then lay down 0.3 s after stopping,
+  pitched to 23° and started to fall (caught). Do not repeat that test. This is
+  why `Lite3()` holds its own heartbeat instead of relying on the app's.
 - **Auto mode is not reported.** Nothing says which mode he is in, so the
   motion calls set it every time.
 - **Posture mode swallows velocity.** In it he reports standing but ignores

@@ -129,7 +129,7 @@ python3 ~/lite3_sdk/examples/hello.py
 |---|---|
 | `no /robot_state_debug within 10s` | the bridge is down, or `Lite_motion` holds UDP 43897 (step 1) |
 | `battery=-` in `status` | the bridge patch is not applied (step 2) |
-| `timed out standing (basic_state=8)` | nothing holds the interlock: use `upright()` or `heartbeat_start()`, or connect the app |
+| `timed out standing (basic_state=8)` | nothing holds the interlock: `Lite3(heartbeat=False)` with no app connected, or the heartbeat cannot reach the motion computer |
 | `no odometry on /leg_odom2` | the bridge is down, or another odometry topic is meant: `Lite3(odom_topic=...)` |
 | `no point cloud` | the depth camera is off (step 5) |
 | `frame` fails after a boot | the camera push started before its stream server and gave up: on the motion computer, `cd ~/rtsp_stream && ./push_video.sh &`, or reboot |

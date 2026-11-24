@@ -141,7 +141,7 @@ class Lite3(Posture, Motion, Depth):
     _stop_at = 0.0           # time.monotonic() of the last cancel(); motion calls started before it stop
 
     def __init__(self, auto_mode=True, timeout=10.0, estop_on_sigint=True,
-                 odom_topic=DEFAULT_ODOM_TOPIC):
+                 odom_topic=DEFAULT_ODOM_TOPIC, heartbeat=True):
         rclpy.init(args=None)
         self.odom_topic = odom_topic
         self._node = self.node_class(odom_topic)
@@ -161,6 +161,11 @@ class Lite3(Posture, Motion, Depth):
                 'no /robot_state_debug within %.0fs. Is transfer_ros2.service '
                 'running, and is Lite_motion stopped? (They fight over UDP '
                 '43897.)' % timeout)
+        # Held by the program, not only the app: with the app's heartbeat alone, an app that
+        # goes off mid-walk leaves him walking ~3.5 s and then lying down mid-stride, which
+        # tipped him 23 deg and nearly over (2026-11-24). Touching an app stick still stops him.
+        if heartbeat:
+            self.heartbeat_start()
         if auto_mode:
             self.auto()
 

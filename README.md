@@ -31,9 +31,9 @@ and the robot has no package mirror.
 
 ## Safety
 
-- **Ctrl-C is the stop button.** While your program holds the heartbeat
-  (`upright()` or `heartbeat_start()`) the robot obeys it with no app
-  connected. Ctrl-C runs `estop()`: halt, then the program ends.
+- **Ctrl-C is the stop button.** `Lite3()` holds the heartbeat, so the robot
+  obeys your program with no app connected. Ctrl-C runs `estop()`: halt, then
+  the program ends. Touching a stick on the app also stops him (manual mode).
 - If the program crashes or is killed while walking, the robot stops by
   itself about 1.5 s after the last velocity command.
 - Every motion call stops on its own for: the distance or angle reached, an

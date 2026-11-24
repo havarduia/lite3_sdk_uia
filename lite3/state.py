@@ -7,7 +7,7 @@ STATE_FIELDS = ('basic', 'gait', 'policy', 'motion', 'task', 'need_move',
                 'zero_flag', 'battery', 'error', 'charging')
 STANDING = 6
 # Settled lying states: 1 after a commanded lie-down, 8 no interlock, 98 cold boot.
-LYING = (1, 8, 98)
+LYING = (1, 8, 98)   # 7: on the way down after losing the heartbeat (seen 2026-11-24)
 # Settled and commandable. 9 is transitional (8 -> 9 -> 1), so it is not here.
 READY_STATES = (1, 6, 98)
 # Seconds before "still lying" means the toggle was swallowed. Too short

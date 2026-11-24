@@ -22,7 +22,7 @@ where there is one, what to do about it.
 ## Starting and stopping
 
 ```python
-Lite3(auto_mode=True, timeout=10.0, estop_on_sigint=True, odom_topic='/leg_odom2')
+Lite3(auto_mode=True, timeout=10.0, estop_on_sigint=True, odom_topic='/leg_odom2', heartbeat=True)
 ```
 
 1. Uses CycloneDDS (set before `rclpy` loads; with the default the node finds nothing).
@@ -31,7 +31,12 @@ Lite3(auto_mode=True, timeout=10.0, estop_on_sigint=True, odom_topic='/leg_odom2
    plain attributes: no callbacks or spin loops in your code.
 3. Ctrl-C runs `estop()` (unless `estop_on_sigint=False`).
 4. Waits `timeout` seconds for `/robot_state_debug`, else raises.
-5. Sets auto mode (needed before any velocity).
+5. Starts the heartbeat (unless `heartbeat=False`): the robot then obeys this
+   program with no app connected, and Ctrl-C is your stop. Touching an app stick
+   still stops him (manual mode). Why always: with only the app's heartbeat, an
+   app that goes off mid-walk leaves him walking about 3.5 s and then lying down
+   mid-stride, which tipped him 23° and nearly over (2026-11-24, docs/robot.md).
+6. Sets auto mode (needed before any velocity).
 
 Use it as a context manager. `close()` halts, drops the heartbeat, and closes
 ROS in an order that matters (spin thread, then `destroy_clients()`, then the
@@ -63,11 +68,11 @@ node); each step fixed a crash that happened.
 
 | Call | Does |
 |---|---|
-| `heartbeat_start()` / `heartbeat_stop()` | the 2 Hz keepalive the app normally sends. With it the robot obeys **with no app connected**: Ctrl-C is then your stop |
+| `heartbeat_start()` / `heartbeat_stop()` | the 2 Hz keepalive the app normally sends; `Lite3()` starts it. With it the robot obeys **with no app connected**: Ctrl-C is then your stop |
 | `wait_ready(timeout=10)` | True once the state is settled and can be commanded |
 | `stand()` | idempotent. Refuses below 20 % battery and in moving states. Resends the toggle once if arming swallowed it |
 | `sit()` | halt, lie down. Idempotent |
-| `upright(heartbeat=True)` | context manager: heartbeat, wait, stand; lies down on every way out |
+| `upright(heartbeat=True)` | context manager: heartbeat (if not already on), wait, stand; lies down on every way out |
 | `auto()` | leave posture mode, set auto mode. The motion calls do it for you |
 | `tilt(pitch_deg)` | context manager: body pitched nose up (negative: down) while standing still; about 14° at most |
 | `action(name)` | a built-in trick from `ACTIONS`; does not stand or sit for you. Only `dance` is confirmed on a robot |
