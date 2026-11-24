@@ -42,15 +42,19 @@ ACTIONS = {
 TRICK_CANCEL = 0x21010C0B
 CANCELLABLE = ('twist', 'moonwalk')
 
-# The app's speed and terrain buttons: name -> (code, the gait field it then reports).
-# Recorded 2026-11-24. The app's Flat button sends 'slow', so Flat always means slow.
+# The app's gait buttons: name -> (code, the gait field it then reports). Recorded
+# 2026-11-24. Flat mode has slow/medium/fast; Rug mode has general/grip/h_step instead.
+# The app's Flat button sends 'slow' and its Rug button sends 'general'.
 GAITS = {
-    'slow':   (0x21010300, 0),
-    'medium': (0x21010307, 4),
-    'fast':   (0x21010303, 5),
-    'rug':    (0x21010401, 2),
+    'slow':    (0x21010300, 0),
+    'medium':  (0x21010307, 4),
+    'fast':    (0x21010303, 5),
+    'general': (0x21010401, 2),
+    'grip':    (0x21010402, 6),
+    'h_step':  (0x21010407, 13),
 }
 # NRM/Crawl: ONE code that flips between them, and nothing reports which is on.
+# Only in slow: the app locks crawl to slow, and in medium and fast the code does nothing.
 CRAWL_TOGGLE = 0x21010406
 
 RECORDED = 'recorded from the app'
@@ -67,7 +71,7 @@ SOURCES.update({code: RECORDED for code, _ in GAITS.values()})
 SOURCES[CRAWL_TOGGLE] = RECORDED
 
 # Known but unused, kept so nobody has to dig them up again:
-#   0x21010402 body up; 0x21010201 stance   COMMUNITY
+#   0x21010201 stance   COMMUNITY
 #   0x0111 / 0x0113 / 0x0114  low-level joint control - BYPASSES the stock
 #       controller, loses control after 5 ms without a 0x0111 frame  OFFICIAL
 #   telemetry to UDP 43897: 0x0901 robot state, 0x0902 joints, 0x0905

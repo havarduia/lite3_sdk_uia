@@ -180,7 +180,7 @@ class Posture:
         udp.send(code)
 
     def gait(self, name, timeout=3.0):
-        """Speed or terrain mode, as the app's buttons: slow, medium, fast or rug.
+        """Gait, as the app's buttons: slow, medium, fast (Flat) or general, grip, h_step (Rug).
         Checked against the gait the robot then reports; raises if it did not change."""
         code, reported = GAITS[name]
         udp.send(code)
@@ -190,13 +190,17 @@ class Posture:
 
     @property
     def gait_name(self):
-        """'slow', 'medium', 'fast', 'rug', or None for a number not seen yet."""
+        """A name from GAITS, or None for a number not seen yet."""
         g = self.state.get('gait')
         return next((n for n, (_, r) in GAITS.items() if r == g), None)
 
     def crawl_toggle(self):
         """The app's NRM/Crawl button. BLIND: it flips the mode, and nothing reports
-        which one he is in, so the program must keep count itself."""
+        which one he is in, so the program must keep count itself. Only works in
+        slow (the app locks crawl to slow; in medium and fast the code did nothing), so refused otherwise."""
+        if self.gait_name != 'slow':
+            raise Lite3Error('crawl only works in slow mode (gait is %s): gait(\'slow\') first'
+                             % (self.gait_name or self.state.get('gait')))
         udp.send(udp.CRAWL_TOGGLE)
 
     def cancel_trick(self):
