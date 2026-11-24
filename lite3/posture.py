@@ -6,7 +6,7 @@ from contextlib import contextmanager
 from . import udp
 from .motion import clamp
 from .state import ARM_GRACE, BATTERY_REFUSE, BATTERY_WARN, LYING, READY_STATES, STANDING
-from .udp import ACTIONS, Lite3Error
+from .udp import ACTIONS, GAITS, Lite3Error
 
 MAX_TILT_DEG = 14.0      # STICK_PITCH full scale, see udp.py
 HEARTBEAT_HZ = 2.0
@@ -178,6 +178,26 @@ class Posture:
                 '%s starts lying and armed (basic_state 1), not %s. '
                 'stand() then sit() gets there.' % (name, self.basic))
         udp.send(code)
+
+    def gait(self, name, timeout=3.0):
+        """Speed or terrain mode, as the app's buttons: slow, medium, fast or rug.
+        Checked against the gait the robot then reports; raises if it did not change."""
+        code, reported = GAITS[name]
+        udp.send(code)
+        if not self._wait(lambda: self.state.get('gait') == reported, timeout):
+            raise Lite3Error('gait %s not taken (reports gait=%s) - is he standing?'
+                             % (name, self.state.get('gait')))
+
+    @property
+    def gait_name(self):
+        """'slow', 'medium', 'fast', 'rug', or None for a number not seen yet."""
+        g = self.state.get('gait')
+        return next((n for n, (_, r) in GAITS.items() if r == g), None)
+
+    def crawl_toggle(self):
+        """The app's NRM/Crawl button. BLIND: it flips the mode, and nothing reports
+        which one he is in, so the program must keep count itself."""
+        udp.send(udp.CRAWL_TOGGLE)
 
     def cancel_trick(self):
         """Stop a running trick, as the app's cancel does. Only the tricks in

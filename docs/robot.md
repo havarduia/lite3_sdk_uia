@@ -68,9 +68,12 @@ Every code the SDK sends, from `lite3.udp.SOURCES`:
 | `0x21010506` | `hello` | trick, from lying; cannot be cancelled | recorded from the app |
 | `0x21010204` | `twist` | trick, from standing; can be cancelled | recorded from the app |
 | `0x2101020D` | `twist_jump` | trick, from standing; cannot be cancelled | recorded from the app |
+| `0x21010300` / `0307` / `0303` | `GAITS` slow / medium / fast | speed modes; `gait` then reads 0 / 4 / 5. Each stands at a different body height (seen, not measured; the odometry's height does not change). The app's Flat button sends slow | recorded from the app |
+| `0x21010401` | `GAITS` rug | terrain mode for rugs; `gait` reads 2 | recorded from the app |
+| `0x21010406` | `CRAWL_TOGGLE` | NRM ↔ crawl, one code for both ways; no state field or odometry height shows which is on | recorded from the app |
 | `0x21010C0B` | `TRICK_CANCEL` | stops moonwalk or twist. The app alternates the value 1, 0, 1; the same value twice did nothing, so the SDK sends 0 then 1 | recorded from the app |
-| `0x2101050B` | `long_jump` | trick, from lying; needs 2 m clear | third-party |
-| `0x21010205` | `turn_over` | rolls onto his back | third-party |
+| `0x2101050B` | `long_jump` | trick, from lying; needs 2 m clear; in the app, never run on purpose | third-party |
+| `0x21010205` | `turn_over` | gets back up after falling over; never run (it would mean making him fall) | third-party |
 
 "Recorded from the app" means captured with `tcpdump` on the perception
 computer while pressing the button in the app. "Third-party" is

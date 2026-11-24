@@ -27,20 +27,31 @@ STICK_PITCH = 0x21010130
 # STICK_ROLL = 0x21010131
 
 # Built-in tricks: name -> (code, posture it starts from), named as in the app.
-# backflip (0x21010502) is left out on purpose.
+# Hidden tricks the app does not offer, such as backflip (0x21010502), are left out on purpose.
 ACTIONS = {
     'hello':      (0x21010506, 'lie'),
     'moonwalk':   (0x2101030C, 'stand'),
     'twist':      (0x21010204, 'stand'),
     'twist_jump': (0x2101020D, 'stand'),
-    'long_jump':  (0x2101050B, 'lie'),     # manual: needs 2 m clear ahead
-    'turn_over':  (0x21010205, 'lie'),     # rolls onto its back
+    'long_jump':  (0x2101050B, 'lie'),     # in the app; needs 2 m clear; never run, on purpose
+    'turn_over':  (0x21010205, 'lie'),     # getting up after a fall; never run, on purpose
 }
 # The app's cancel, recorded 2026-11-24: sent once per press, value 1 one time and
 # 0 the next; both stopped the trick. Sending 1 twice in a row did not (see cancel_trick). Only these tricks offer it in the app.
 # The app sends each trick once too.
 TRICK_CANCEL = 0x21010C0B
 CANCELLABLE = ('twist', 'moonwalk')
+
+# The app's speed and terrain buttons: name -> (code, the gait field it then reports).
+# Recorded 2026-11-24. The app's Flat button sends 'slow', so Flat always means slow.
+GAITS = {
+    'slow':   (0x21010300, 0),
+    'medium': (0x21010307, 4),
+    'fast':   (0x21010303, 5),
+    'rug':    (0x21010401, 2),
+}
+# NRM/Crawl: ONE code that flips between them, and nothing reports which is on.
+CRAWL_TOGGLE = 0x21010406
 
 RECORDED = 'recorded from the app'
 THIRD_PARTY = 'third-party'                # https://github.com/infodriver/lite3-sdk
@@ -52,11 +63,11 @@ SOURCES = {
 }
 SOURCES.update({code: THIRD_PARTY for code, _ in ACTIONS.values()})
 SOURCES.update({ACTIONS[n][0]: RECORDED for n in ('moonwalk', 'hello', 'twist', 'twist_jump')})
+SOURCES.update({code: RECORDED for code, _ in GAITS.values()})
+SOURCES[CRAWL_TOGGLE] = RECORDED
 
 # Known but unused, kept so nobody has to dig them up again:
-#   0x21010300 / 0x21010307 / 0x21010406  gait OR body height - sources
-#       disagree, capture from the app before use
-#   0x21010303  fast gait; 0x21010402 body up; 0x21010201 stance   COMMUNITY
+#   0x21010402 body up; 0x21010201 stance   COMMUNITY
 #   0x0111 / 0x0113 / 0x0114  low-level joint control - BYPASSES the stock
 #       controller, loses control after 5 ms without a 0x0111 frame  OFFICIAL
 #   telemetry to UDP 43897: 0x0901 robot state, 0x0902 joints, 0x0905

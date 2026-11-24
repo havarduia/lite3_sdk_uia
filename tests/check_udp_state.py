@@ -25,6 +25,8 @@ def main():
     assert udp.SOURCES[udp.STAND_TOGGLE] == 'recorded from the app'
     assert udp.SOURCES[udp.ACTIONS['moonwalk'][0]] == udp.RECORDED and udp.SOURCES[udp.TRICK_CANCEL] == udp.RECORDED
     assert set(udp.CANCELLABLE) <= set(udp.ACTIONS)
+    assert len({r for _, r in udp.GAITS.values()}) == len(udp.GAITS)       # gait_name is unambiguous
+    assert all(udp.SOURCES[c] == udp.RECORDED for c, _ in udp.GAITS.values())
     # the patched bridge sends 10 fields, battery at index 7; the stock bridge sends 7
     assert state.parse([6, 0, 0, 0, 0, 0, 0, 80]) == dict(zip(state.STATE_FIELDS[:8], [6, 0, 0, 0, 0, 0, 0, 80]))
     assert 'battery' not in state.parse([6, 0, 0, 0, 0, 0, 0])

@@ -8,12 +8,12 @@ import select
 import sys
 import time
 
-from .udp import ACTIONS, CANCELLABLE
+from .udp import ACTIONS, CANCELLABLE, GAITS
 
 TRICK_WAIT_S = 30.0     # how long `action` keeps Enter as the cancel key
 
-USAGE = ('commands: status stand sit auto walk <m> turn <deg> scan action <%s> '
-         'estop [--disarm] frame <file.jpg> clips play <clip>' % '|'.join(ACTIONS))
+USAGE = ('commands: status stand sit auto walk <m> turn <deg> scan action <%s> gait <%s> crawl '
+         'estop [--disarm] frame <file.jpg> clips play <clip>' % ('|'.join(ACTIONS), '|'.join(GAITS)))
 
 
 def trick(bot, name):
@@ -73,6 +73,12 @@ def main(argv=None):
         elif cmd == 'estop':
             print('estop:', bot.estop(disarm='--disarm' in args))
             print(bot.status())
+        elif cmd == 'gait':
+            bot.gait(args[1])
+            print(bot.status())
+        elif cmd == 'crawl':
+            bot.crawl_toggle()
+            print('NRM/Crawl toggled (nothing reports which one is on now)')
         elif cmd == 'action':
             trick(bot, args[1])
             print(bot.status())

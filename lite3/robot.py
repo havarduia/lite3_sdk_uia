@@ -338,7 +338,7 @@ class Lite3(Posture, Motion, Depth):
         f, r = self.ultrasound
         t = self.attitude
         b = s.get('battery')
-        return ('basic=%s gait=%s battery=%s ' % (s.get('basic'), s.get('gait'),
+        return ('basic=%s gait=%s battery=%s ' % (s.get('basic'), self.gait_name or s.get('gait'),
                                                   '-' if b is None else '%d%%' % b)
                 + ('error=%s ' % s['error'] if s.get('error') else '')
                 + ('charging ' if s.get('charging') else '')

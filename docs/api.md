@@ -76,6 +76,9 @@ node); each step fixed a crash that happened.
 | `auto()` | leave posture mode, set auto mode. The motion calls do it for you |
 | `tilt(pitch_deg)` | context manager: body pitched nose up (negative: down) while standing still; about 14° at most |
 | `action(name)` | a built-in trick from `ACTIONS`, named as in the app; does not stand or sit for you. Sent once, returns at once |
+| `gait(name)` | speed or terrain mode as the app's buttons: `slow`, `medium`, `fast`, `rug`. Waits until the robot reports it, else raises. Flat in the app is `slow` |
+| `gait_name` | the mode he reports now, or `None` |
+| `crawl_toggle()` | the app's NRM/Crawl button. Blind: flips the mode, and nothing reports which is on |
 | `cancel_trick()` | stops a running `moonwalk` or `twist` (`udp.CANCELLABLE`); the others cannot be stopped, in the app either |
 
 ## Motion
@@ -164,5 +167,5 @@ assert result['reason'] == 'target reached' and halted
 
 ```
 python3 -m lite3 status | stand | sit | auto | walk <m> | turn <deg> | scan |
-                 action <name> (Enter or Ctrl-C cancels) | estop [--disarm] | frame <file.jpg> | clips | play <clip>
+                 action <name> (Enter or Ctrl-C cancels) | gait <slow|medium|fast|rug> | crawl | estop [--disarm] | frame <file.jpg> | clips | play <clip>
 ```
